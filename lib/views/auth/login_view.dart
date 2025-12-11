@@ -160,10 +160,10 @@ class _LoginViewState extends State<LoginView> {
                                         color: const Color(0xFF0D5F48),
                                         width: double.infinity,
                                         onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (_) => BottomNav()),
-                                          );
+                                           Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const BottomNav()),
+            );
                                         },
                                         height: 50,
                                       ),

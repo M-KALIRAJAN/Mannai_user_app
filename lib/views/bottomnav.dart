@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mannai_user_app/utils/app_consts.dart';
 import 'package:mannai_user_app/views/screens/chats_view.dart';
 import 'package:mannai_user_app/views/screens/my_service_request.dart';
 import 'package:mannai_user_app/views/screens/myprofile.dart';
@@ -35,6 +36,7 @@ class _BottomNavState extends State<BottomNav> {
     ];
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +45,7 @@ class _BottomNavState extends State<BottomNav> {
         index: _selectedIndex,
         children: screens,
       ),
-
+    
       bottomNavigationBar: Container(
         height: 85,
         decoration: BoxDecoration(
@@ -60,7 +62,7 @@ class _BottomNavState extends State<BottomNav> {
             ),
           ],
         ),
-
+    
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(25),
@@ -76,13 +78,13 @@ class _BottomNavState extends State<BottomNav> {
             backgroundColor: Colors.white,
             elevation: 0,
             type: BottomNavigationBarType.fixed,
-
+    
             selectedItemColor: Color(0xFF0F7757),
             unselectedItemColor: Colors.grey,
-
+    
             selectedLabelStyle: const TextStyle(fontSize: 12),
             unselectedLabelStyle: const TextStyle(fontSize: 12),
-
+    
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home_outlined),
@@ -97,12 +99,16 @@ class _BottomNavState extends State<BottomNav> {
                   AssetImage("assets/icons/services.png"),
                   size: 28,
                 ),
-                activeIcon: Icon(Icons.list_alt),
+                activeIcon:ImageIcon(
+                  AssetImage("assets/icons/services.png"),
+                   color:AppColors.btn_primery,
+                  size: 28,
+                ),
                 label: "Service",
               ),
               BottomNavigationBarItem(
                 icon: ImageIcon(AssetImage("assets/icons/chat.png"), size: 26),
-                activeIcon: Icon(Icons.list_alt),
+                activeIcon:ImageIcon(AssetImage("assets/icons/chat.png"), size: 26,color:AppColors.btn_primery),
                 label: "Live Chat",
               ),
               BottomNavigationBarItem(
@@ -110,7 +116,11 @@ class _BottomNavState extends State<BottomNav> {
                   AssetImage("assets/icons/profile.png"),
                   size: 26,
                 ),
-                activeIcon: Icon(Icons.person),
+                activeIcon:  ImageIcon(
+                  AssetImage("assets/icons/profile.png"),
+                  color:AppColors.btn_primery,
+                  size: 26,
+                ),
                 label: "Profile",
               ),
               BottomNavigationBarItem(
@@ -118,7 +128,11 @@ class _BottomNavState extends State<BottomNav> {
                   AssetImage("assets/icons/setting.png"),
                   size: 26,
                 ),
-                activeIcon: Icon(Icons.settings),
+                activeIcon: ImageIcon(
+                  AssetImage("assets/icons/setting.png"),
+                  color:AppColors.btn_primery,
+                  size: 26,
+                ),
                 label: "Settings",
               ),
             ],

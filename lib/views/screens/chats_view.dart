@@ -15,6 +15,17 @@ class _ChatsViewState extends State<ChatsView> {
   Widget build(BuildContext context) {
     return Scaffold(
        backgroundColor: AppColors.background_clr,
+    floatingActionButton:   SizedBox(
+      height: 49,
+      width: 49,
+      child: FloatingActionButton(
+       onPressed: (){},
+        backgroundColor: Color.fromRGBO(13, 95, 72, 100),
+        shape: CircleBorder(),
+        child: Icon(Icons.add,color: Colors.white,size: 30,),
+        ),
+    ),
+
        body: SafeArea(
          child: Column(
           children: [
@@ -144,11 +155,15 @@ Padding(
       ),
     ],
   ),
-)
+),
 
+ Spacer(),
 
           ],
          ),
+ 
+
+         
        ),
     );
   }

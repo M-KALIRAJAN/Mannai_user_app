@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/utils/app_consts.dart';
 import 'package:mannai_user_app/widgets/app_back.dart';
 
@@ -28,7 +29,7 @@ class _CreateServiceRequestState extends State<CreateServiceRequest> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppCircleIconButton(icon: Icons.arrow_back, onPressed: () {}),
+                  AppCircleIconButton(icon: Icons.arrow_back, onPressed: () {context.pop();}),
                   Text(
                     "Create Servie Request",
                     style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),

@@ -5,6 +5,7 @@ import 'package:mannai_user_app/routing/app_router.dart';
 import 'package:mannai_user_app/views/languagetoggle.dart';
 import 'package:mannai_user_app/views/logoanimation.dart';
 import 'package:mannai_user_app/views/onboarding/BottomCurveClipper.dart';
+import 'package:mannai_user_app/views/onboarding/about_view.dart';
 
 import 'package:mannai_user_app/widgets/buttons/primary_button.dart';
 
@@ -79,7 +80,9 @@ class _WelcomeViewState extends State<WelcomeView> {
               child: AppButton(
                 text: "Get Started",
                 onPressed: () {
-                  context.push(RouteNames.about);
+                  // context.push(RouteNames.about);
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AboutView()));
+
                 },
                 color: AppColors.btn_primery,
                 width: double.infinity,

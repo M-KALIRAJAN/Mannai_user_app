@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
+import 'package:mannai_user_app/views/onboarding/languange_view.dart';
 
 
 class CustomSplashScreen extends StatefulWidget {
@@ -21,7 +22,9 @@ class _CustomSplashScreenState extends State<CustomSplashScreen> {
   void _goNext() {
     Timer(const Duration(seconds: 2), () {
       // Navigate using GoRouter
-      context.push(RouteNames.language);
+      // context.push(RouteNames.language);
+ Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LanguangeView()));
+
     });
   }
 

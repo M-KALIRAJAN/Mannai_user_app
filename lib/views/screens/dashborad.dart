@@ -49,6 +49,7 @@ final List<Map<String, String>> services = [
     );
   }
 
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
@@ -73,10 +74,10 @@ final List<Map<String, String>> services = [
                   bottomRight: Radius.circular(51),
                 ),
               ),
-
+    
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-
+    
                 children: [
                   SizedBox(height: 37),
                   Row(
@@ -104,9 +105,9 @@ final List<Map<String, String>> services = [
                               ),
                             ),
                           ),
-
+    
                           const SizedBox(width: 12),
-
+    
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +131,7 @@ final List<Map<String, String>> services = [
                           ),
                         ],
                       ),
-
+    
                       Container(
                         height: 40,
                         width: 40,
@@ -138,10 +139,29 @@ final List<Map<String, String>> services = [
                           shape: BoxShape.circle,
                           color: Colors.white.withOpacity(0.3),
                         ),
-                        child: const Icon(
-                          Icons.notifications,
-                          color: Colors.white,
-                        ),
+                        child:
+                        Center(
+                          child: Stack(
+                            children: [
+                           const Icon(
+                            Icons.notifications_outlined,
+                            color: Colors.white,
+                            size: 27,
+                          ),
+                          Positioned(
+                             left: 11,
+                            child: Container(
+                              height: 14,
+                              width: 14,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                              ),
+                              child: Center(child: Text("25",style: TextStyle(color: AppColors.btn_primery,fontSize: 8,fontWeight: FontWeight.bold),)),
+                            ))
+                            ],
+                          ),
+                        )
                       ),
                     ],
                   ),
@@ -212,7 +232,7 @@ final List<Map<String, String>> services = [
                   fit: BoxFit.cover,
                 ),
               ),
-
+    
               child: Column(
                 children: [
                   Row(
@@ -257,14 +277,14 @@ final List<Map<String, String>> services = [
                   ),
                   SizedBox(height: 5),
                  SizedBox(
-  height:   105,
-  child: ListView.builder(
+      height:   105,
+      child: ListView.builder(
     scrollDirection: Axis.horizontal,
     itemCount: services.length,
     itemBuilder: (context, index) {
       final title = services[index]["title"]!;
       final imagePath = services[index]["image"]!;
-
+    
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: InkWell(
@@ -292,9 +312,9 @@ final List<Map<String, String>> services = [
                   fit: BoxFit.contain,
                 ),
               ),
-
+    
            
-
+    
               SizedBox(
                 width: 80,
                 child: Text(
@@ -311,10 +331,10 @@ final List<Map<String, String>> services = [
         ),
       );
     },
-  ),
-),
-
-
+      ),
+    ),
+    
+    
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     child: Row(
@@ -322,14 +342,14 @@ final List<Map<String, String>> services = [
                       children: [
                         RequestCart(
                           title: "Create Request ",
-
+    
                           color: AppColors.btn_primery,
                           image: Image.asset("assets/icons/add.png"),
                           onTap: () {
                             context.push(RouteNames.creterequest);
                           },
                         ),
-
+    
                         RequestCart(
                           title: "Add point",
                           image: Image.asset("assets/icons/gold_coin.png"),
@@ -428,7 +448,7 @@ final List<Map<String, String>> services = [
                       ),
                     ),
                   ),
-
+    
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -440,12 +460,12 @@ final List<Map<String, String>> services = [
                         borderRadius: BorderRadius.circular(14),
                         color: Colors.white,
                       ),
-
+    
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Reent Ativity",
+                            "Recent Ativity",
                             style: TextStyle(
                               fontSize: AppFontSizes.medium,
                               fontWeight: FontWeight.w600,
@@ -458,9 +478,11 @@ final List<Map<String, String>> services = [
                                   "View All",
                                   style: TextStyle(
                                     fontSize: AppFontSizes.small,
+                                    fontWeight: FontWeight.bold,
                                     color: AppColors.borderGrey,
                                   ),
                                 ),
+                                Icon(Icons.arrow_forward_ios_rounded ,color:AppColors.borderGrey ,size: 16,)
                               ],
                             ),
                           ),

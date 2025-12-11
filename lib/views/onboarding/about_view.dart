@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/utils/app_consts.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
+import 'package:mannai_user_app/views/auth/login_view.dart';
 import 'package:mannai_user_app/widgets/app_back.dart';
 
 class AboutView extends StatefulWidget {
@@ -93,7 +94,8 @@ class _AboutViewState extends State<AboutView> {
                       ),
                       InkWell(
                         onTap: () {
-                           context.push(RouteNames.login);
+                          //  context.push(RouteNames.login);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginView()));
                         },
                         child: Container(
                           height: 25,

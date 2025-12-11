@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/utils/app_consts.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
+import 'package:mannai_user_app/views/onboarding/welcome_view.dart';
 import 'package:mannai_user_app/widgets/buttons/primary_button.dart';
 
 class LanguangeView extends StatefulWidget {
@@ -71,9 +72,9 @@ class _LanguangeViewState extends State<LanguangeView> {
 
                         const SizedBox(height: 25),
                         AppButton(
-                          text: "Tamil",
+                          text: "عربي",
                           onPressed: () {
-                            context.push(RouteNames.welcome);
+                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>WelcomeView()));
                           },
                           color: AppColors.button_secondary,
                           width: double.infinity,
