@@ -1,7 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mannai_user_app/utils/app_consts.dart';
+import 'package:mannai_user_app/core/constants/app_consts.dart';
+import 'package:mannai_user_app/core/utils/logger.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
+import 'package:mannai_user_app/services/home_view_service.dart';
 import 'package:mannai_user_app/views/screens/AddPointBottomSheet.dart';
 import 'package:mannai_user_app/views/screens/send_service_request.dart';
 import 'package:mannai_user_app/widgets/RecentActivity.dart';
@@ -19,12 +23,25 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   @override
-final List<Map<String, String>> services = [
+ Map<String,dynamic>? services;
+  final List<String> serviceslist = [];
+final List<Map<String, String>> servicess = [
   {"image": "assets/icons/hvac.png", "title": "HVAC Service"},
   {"image": "assets/icons/electrical.png", "title": "Electrical Service"},
   {"image": "assets/icons/plumb.png", "title": "Plumbing Service"},
   {"image": "assets/icons/ac.png", "title": "A/C Service"},
 ];
+
+@override
+void initState() {
+  super.initState();
+   ServicesLists();
+} 
+
+void ServicesLists() async{
+    services = await HomeViewService().servicelists();
+    AppLogger.debug("services ${services}");
+    }
 
   Widget statusItem(Color color, String text) {
     return Row(
@@ -280,10 +297,10 @@ final List<Map<String, String>> services = [
       height:   105,
       child: ListView.builder(
     scrollDirection: Axis.horizontal,
-    itemCount: services.length,
+    itemCount: servicess.length,
     itemBuilder: (context, index) {
-      final title = services[index]["title"]!;
-      final imagePath = services[index]["image"]!;
+      final title = servicess[index]["title"]!;
+      final imagePath = servicess[index]["image"]!;
     
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),

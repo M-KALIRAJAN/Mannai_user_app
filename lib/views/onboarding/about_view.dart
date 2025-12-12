@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mannai_user_app/utils/app_consts.dart';
+import 'package:mannai_user_app/core/constants/app_consts.dart';
+import 'package:mannai_user_app/core/utils/logger.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
+import 'package:mannai_user_app/services/onbording_service.dart';
 import 'package:mannai_user_app/views/auth/login_view.dart';
 import 'package:mannai_user_app/widgets/app_back.dart';
 
@@ -15,17 +19,32 @@ class AboutView extends StatefulWidget {
 class _AboutViewState extends State<AboutView> {
   final PageController _controller = PageController();
   int currentIndex = 0;
-
+  Map<String, dynamic>? aboutData;
+  bool isLoading = true;
+  final List<String> textPages = [];
   // Only the text content changes
-  final List<String> textPages = [
-    """We are pleased to welcome you to NAQI BAHRAIN SERVICES, an innovative community project that aims to support families across Bahraini society and ease their financial burdens by providing high-quality and free services that enhance your daily experience."""
-        """Our mission is to ensure that all members benefit in a fair and organized manner, while promoting the spirit of cooperation and community participation."""
-        """We aim to promote the spirit of cooperation and community participation, so that everyone in Bahraini society can enjoy the benefits of our services in an organized and convenient way."""
-        """We aim to promote the spirit of cooperation and community participation, so that everyone in Bahraini society can enjoy the benefits of our services in an organized and convenient way."""
-        """We aim to promote the spirit of cooperation and community participation, so that everyone in Bahraini society can enjoy the benefits of our services in an organized and convenient way.""",
-    """We aim to promote the spirit of cooperation and community participation, so that everyone in Bahraini society can enjoy the benefits of our services in an organized and convenient way.""",
-    """We aim to promote the spirit of cooperation and community participation, so that everyone in Bahraini society can enjoy the benefits of our services in an organized and convenient way.""",
-  ];
+
+  @override
+  void initState() {
+    super.initState();
+    loadAbout();
+  }
+
+  void loadAbout() async {
+    aboutData = await OnbordingService().fetchAbout();
+
+    AppLogger.warn(jsonEncode(aboutData));
+
+    if (aboutData != null &&
+        aboutData!["data"] != null &&
+        aboutData!["data"]["content"] ) {
+      textPages.addAll(List<String>.from(aboutData!["data"]["content"]));
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   void nextPage() {
     if (currentIndex < textPages.length - 1) {
@@ -34,7 +53,11 @@ class _AboutViewState extends State<AboutView> {
         curve: Curves.easeInOut,
       );
     } else {
-      _controller.jumpToPage(0); // loop back to first
+      // _controller.jumpToPage(0); // loop back to first
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginView()),
+      );
     }
   }
 
@@ -95,7 +118,12 @@ class _AboutViewState extends State<AboutView> {
                       InkWell(
                         onTap: () {
                           //  context.push(RouteNames.login);
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginView()));
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginView(),
+                            ),
+                          );
                         },
                         child: Container(
                           height: 25,

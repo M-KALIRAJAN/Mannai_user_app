@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mannai_user_app/utils/app_consts.dart';
+import 'package:mannai_user_app/core/constants/app_consts.dart';
+import 'package:mannai_user_app/core/network/dio_client.dart';
+import 'package:mannai_user_app/core/utils/logger.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
+import 'package:mannai_user_app/services/onbording_service.dart';
 import 'package:mannai_user_app/views/languagetoggle.dart';
 import 'package:mannai_user_app/views/logoanimation.dart';
 import 'package:mannai_user_app/views/onboarding/BottomCurveClipper.dart';
@@ -17,6 +22,27 @@ class WelcomeView extends StatefulWidget {
 }
 
 class _WelcomeViewState extends State<WelcomeView> {
+
+  String? welcomeUrl;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    welocomelogo();
+  }
+
+  void welocomelogo() async {
+    final welcomeLogo = await OnbordingService().loading();
+    AppLogger.warn(jsonEncode(welcomeLogo));
+        if(welcomeLogo != null && welcomeLogo["data"] != null){
+          setState(() {
+            String fileName = welcomeLogo["data"]["image"];
+              welcomeUrl = "${ImageBaseUrl.baseUrl}$fileName";
+          });
+        }
+ 
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -54,14 +80,23 @@ class _WelcomeViewState extends State<WelcomeView> {
 
                 Positioned(top: 50, right: 20, child: LanguageView()),
 
-                Positioned(
-                  bottom: -170,
-                  child: SizedBox(
-                    height: 430,
-                    width: 570,
-                    child: Image.asset("assets/images/logo.png"),
-                  ),
-                ),
+          Positioned(
+  bottom: -110,
+  child: SizedBox(
+    height: 270,
+    width: 480,
+    child: welcomeUrl == null
+      ? Image.asset(
+          "assets/images/logo.png",
+          fit: BoxFit.contain,
+        )
+      : Image.network(
+          welcomeUrl!,
+          fit: BoxFit.contain,
+        ),
+  ),
+),
+
               ],
             ),
 
@@ -81,8 +116,10 @@ class _WelcomeViewState extends State<WelcomeView> {
                 text: "Get Started",
                 onPressed: () {
                   // context.push(RouteNames.about);
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AboutView()));
-
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => AboutView()),
+                  );
                 },
                 color: AppColors.btn_primery,
                 width: double.infinity,

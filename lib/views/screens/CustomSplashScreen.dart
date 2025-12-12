@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:go_router/go_router.dart';
-import 'package:mannai_user_app/routing/app_router.dart';
+
 import 'package:mannai_user_app/views/onboarding/languange_view.dart';
 
 

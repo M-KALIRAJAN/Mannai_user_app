@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mannai_user_app/models/SignupModel.dart';
 
-import 'package:mannai_user_app/utils/validators.dart';
+import 'package:mannai_user_app/core/utils/validators.dart';
 
 class SignupController {
   // Text controllers
