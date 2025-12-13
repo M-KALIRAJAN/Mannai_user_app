@@ -9,7 +9,7 @@ class AppButton extends StatelessWidget {
   final double height;
   final double borderRadius;
   final double width;
-  final Widget? icon; // <-- CHANGED
+  final Widget? icon;
 
   const AppButton({
     super.key,
@@ -20,7 +20,7 @@ class AppButton extends StatelessWidget {
     this.height = 60,
     required this.width,
     this.borderRadius = 14,
-    this.icon, // <-- CHANGED
+    this.icon,
   });
 
   @override
@@ -29,12 +29,20 @@ class AppButton extends StatelessWidget {
       width: width,
       height: height,
       child: ElevatedButton(
+        clipBehavior: Clip.antiAlias, // IMPORTANT → full ripple clip
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
-          overlayColor: AppColors.btn_primery.withOpacity(0.1)
+        ).copyWith(
+          overlayColor: MaterialStateProperty.resolveWith((states) {
+            if (states.contains(MaterialState.pressed)) {
+              return Colors.white.withOpacity(0.25);
+            }
+            return null;
+          }),
+          splashFactory: InkRipple.splashFactory, // SMOOTH FULL RIPPLE
         ),
         onPressed: onPressed,
         child: icon == null
@@ -43,7 +51,7 @@ class AppButton extends StatelessWidget {
                 style: TextStyle(
                   color: textColor,
                   fontSize: AppFontSizes.medium,
-                   fontFamily: 'Poppins',
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
                 ),
               )

@@ -56,17 +56,15 @@ class _AccountStepperState extends State<AccountStepper> {
                     },
                   ),
 
-                  // Step 2: Address
-                  Form(
-                    key: _formKeyAddress,
-                    child: Address(
-                      accountType: widget.accountType,
-                      onNext: () {
-                        if (_formKeyAddress.currentState!.validate()) {
-                          setState(() => _currentStep += 1);
-                        }
-                      },
-                    ),
+                
+                  Address(
+                    accountType: widget.accountType,
+                    formKey: _formKeyAddress,
+                    onNext: () {
+                      if (_formKeyAddress.currentState!.validate()) {
+                        setState(() => _currentStep += 1);
+                      }
+                    },
                   ),
 
                   // Step 3: Add Member (Family Only)

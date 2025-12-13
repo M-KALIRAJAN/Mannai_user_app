@@ -9,9 +9,10 @@ class AddressController {
   final aptNo = TextEditingController();
   final building = TextEditingController();
 final floor = TextEditingController();
-  // Form key for validation
-  final formKey = GlobalKey<FormState>();
+  //Rode
+    String?rode ;
 
+   
   // Validators
   String? validateDoorNo(String? value) =>
       value == null || value.isEmpty ? "Enter door number" : null;
@@ -28,13 +29,17 @@ final floor = TextEditingController();
   String? validateBuilding(String? value) =>
       value == null || value.isEmpty ? "Enter building name" : null;
 
+    String? validateRode(String? value) =>
+       value == null || value.isEmpty ?  "Select Your Road": null
+;
   // Save data to model
   AddressModel getAddressData() {
     return AddressModel(
       aptNo: aptNo.text, 
       street: street.text, 
       city: city.text,
-        floor: floor.text,
+        floor: floor.text, 
+        rode:rode! ,  
        building: building.text);
   }
 

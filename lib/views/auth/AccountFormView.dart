@@ -11,6 +11,7 @@ class AccountFormView extends StatefulWidget {
   final VoidCallback onNext;
   final GlobalKey<FormState> formKey;
 
+
   const AccountFormView({
     super.key,
     required this.accountType,
@@ -24,6 +25,13 @@ class AccountFormView extends StatefulWidget {
 
 class _AccountFormViewState extends State<AccountFormView> {
   final controller = SignupController();
+
+  Future<void> submitBasicInfo(BuildContext context) async{
+      if(!widget.formKey.currentState!.validate()) return ;
+       controller.saveToModel();
+         AppLogger.debug(controller.signupData!.toJson().toString());
+           widget.onNext();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +61,7 @@ class _AccountFormViewState extends State<AccountFormView> {
           // Mobile
           AppTextField(
             controller: controller.mobile,
+            keyboardType: TextInputType.phone,
             label: "Mobile Number*",
             validator: (value) => controller.validateMobile(value),
           ),
@@ -102,13 +111,7 @@ class _AccountFormViewState extends State<AccountFormView> {
             width: double.infinity,
 
             onPressed: () {
-              if (widget.formKey.currentState!.validate()) {
-                controller.saveToModel();
-
-                AppLogger.debug(controller.signupData!.toJson().toString());
-
-                widget.onNext();
-              }
+                   submitBasicInfo(context);
             },
           ),
         ],

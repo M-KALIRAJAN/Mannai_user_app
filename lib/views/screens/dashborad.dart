@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/core/constants/app_consts.dart';
+import 'package:mannai_user_app/core/network/dio_client.dart';
 import 'package:mannai_user_app/core/utils/logger.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
 import 'package:mannai_user_app/services/home_view_service.dart';
@@ -23,25 +24,24 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   @override
- Map<String,dynamic>? services;
-  final List<String> serviceslist = [];
-final List<Map<String, String>> servicess = [
-  {"image": "assets/icons/hvac.png", "title": "HVAC Service"},
-  {"image": "assets/icons/electrical.png", "title": "Electrical Service"},
-  {"image": "assets/icons/plumb.png", "title": "Plumbing Service"},
-  {"image": "assets/icons/ac.png", "title": "A/C Service"},
-];
 
+  Map<String, dynamic>? services;
+
+
+@override
 @override
 void initState() {
   super.initState();
-   ServicesLists();
-} 
+  fetchServices();
+}
 
-void ServicesLists() async{
-    services = await HomeViewService().servicelists();
-    AppLogger.debug("services ${services}");
-    }
+Future<void> fetchServices() async {
+  final data = await HomeViewService().servicelists();
+  setState(() {
+    services = data;
+  });
+ AppLogger.debug("Services response: $services");
+}
 
   Widget statusItem(Color color, String text) {
     return Row(
@@ -68,6 +68,8 @@ void ServicesLists() async{
 
 
   Widget build(BuildContext context) {
+      final serviceList = services?['data']?? [];
+   
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -297,10 +299,9 @@ void ServicesLists() async{
       height:   105,
       child: ListView.builder(
     scrollDirection: Axis.horizontal,
-    itemCount: servicess.length,
+    itemCount: serviceList.length,
     itemBuilder: (context, index) {
-      final title = servicess[index]["title"]!;
-      final imagePath = servicess[index]["image"]!;
+       final service = serviceList[index];
     
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -310,9 +311,10 @@ void ServicesLists() async{
               context,
               MaterialPageRoute(
                 builder: (_) => SendServiceRequest(
-                  title: title,
-                  imagePath: imagePath,
-                ),
+                  title:service['name'] ,
+imagePath: service['serviceImage'] != null
+    ? "${ImageBaseUrl.baseUrl}/${service['serviceImage']}"
+    : null,                )
               ),
             );
           },
@@ -322,12 +324,12 @@ void ServicesLists() async{
                 width: 70,
                 height: 70,
                 
-                child: Image.asset(
-                  imagePath,
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.contain,
-                ),
+                child: service['serviceLogo'] != null? Image.network(
+                        "${ImageBaseUrl.baseUrl}/${service['serviceLogo']}",
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.cover,
+                      ) : Icon(Icons.miscellaneous_services, size: 40)
               ),
     
            
@@ -335,7 +337,7 @@ void ServicesLists() async{
               SizedBox(
                 width: 80,
                 child: Text(
-                  title,
+                  service['name'],
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 12,

@@ -4,6 +4,7 @@ class AddressModel {
   final String aptNo;
   final String building;
    final String floor;
+   final String rode;
 
   AddressModel({
     required this.aptNo,
@@ -11,6 +12,7 @@ class AddressModel {
     required this.city,
     required this.building,
       required this.floor,
+      required this.rode
   });
 
   Map<String, dynamic> toJson() => {
@@ -19,5 +21,6 @@ class AddressModel {
         "aptNo": aptNo,
         "building": building,
           "floor": floor,
+          "rode":rode
       };
 }

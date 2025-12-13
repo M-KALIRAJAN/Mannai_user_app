@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:mannai_user_app/controllers/signup_controller.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mannai_user_app/controllers/family_member_controller.dart';
+
 import 'package:mannai_user_app/core/constants/app_consts.dart';
-import 'package:mannai_user_app/views/auth/individual/Address.dart';
+import 'package:mannai_user_app/core/utils/logger.dart';
+import 'package:mannai_user_app/routing/app_router.dart';
+
 import 'package:mannai_user_app/widgets/buttons/primary_button.dart';
 import 'package:mannai_user_app/widgets/inputs/app_dropdown.dart';
 import 'package:mannai_user_app/widgets/inputs/app_text_field.dart';
@@ -24,7 +30,7 @@ class Addmember extends StatefulWidget {
 
 class _AddmemberState extends State<Addmember> {
    bool _isAddress = false;
-  final controller = SignupController();
+  final controller =  FamilyMemberController();
    
   @override
   Widget build(BuildContext context) {
@@ -48,25 +54,27 @@ class _AddmemberState extends State<Addmember> {
                 ),
                 const SizedBox(height: 15),
                 AppTextField(
-                  controller: controller.name,
+                  controller: controller.familyCount,
                   label: "Enter Family Count*",
-                  validator: (value) => controller.validateName(value),
+                  validator:(value)=> controller.validatefamilycount(value),
                 ),
                 const SizedBox(height: 15),
 
                 AppTextField(
-                  controller: controller.name,
+                  controller: controller.fullName,
                   label: "Member Full Name*",
-                  validator: (value) => controller.validateName(value),
+                  validator: (value) => controller.validatefullname(value),
                 ),
 
                 const SizedBox(height: 15),
                 AppDropdown(
                   label: "Relationship*",
                   items: ["Father", "Mother", "Son", "Daughter", "Spouse"],
-                  value: controller.gender,
+                  value: controller.relation,
                   onChanged: (val) {
-                    // setState(() => controller.relationship = val);
+                      setState(() {
+                          controller.relation = val;
+                      });
                   },
                   validator: (val) =>
                       val == null ? "Please select relationship" : null,
@@ -75,17 +83,17 @@ class _AddmemberState extends State<Addmember> {
                 const SizedBox(height: 15),
 
                 AppTextField(
-                  controller: controller.name,
+                  controller: controller.mobile,
                   label: "Mobile Number*",
-                  validator: (value) => controller.validateName(value),
+                  validator: (value) => controller.validatemobilenumber(value),
                 ),
 
                 const SizedBox(height: 15),
 
                 AppTextField(
-                  controller: controller.name,
+                  controller: controller.email,
                   label: "Email Adress*",
-                  validator: (value) => controller.validateName(value),
+                  validator: (value) => controller.validateemail(value),
                 ),
                 const SizedBox(height: 20),
                 AppDropdown(
@@ -93,7 +101,9 @@ class _AddmemberState extends State<Addmember> {
                   items: ["Male", "Female", "Oter"],
                   value: controller.gender,
                   onChanged: (val) {
-                    // setState(() => controller.relationship = val);
+                        setState(() {
+                          controller.gender = val ;
+                        });
                   },
                   validator: (val) =>
                       val == null ? "Please select relationship" : null,
@@ -122,7 +132,7 @@ class _AddmemberState extends State<Addmember> {
                 ),
                 const SizedBox(height: 20),
                   if (_isAddress)
-                  Address(accountType: "Family" ,family: true),
+                  // Address(accountType: "Family" ,family: true, formKey: ,),
                     const SizedBox(height: 20),
                 AppButton(
                   text: "Add Member",
@@ -138,7 +148,13 @@ class _AddmemberState extends State<Addmember> {
           const SizedBox(height: 20),
           AppButton(
             text: "Sign Up",
-            onPressed: () {},
+            onPressed: () {
+                final isValied = widget.formKey.currentState?.validate() ?? false;
+                if(!isValied) return null ;
+                final addmember = controller.getfamilymemberdata();
+                AppLogger.debug(jsonEncode(addmember));
+                context.push(RouteNames.accountverfy);
+            },
             color: AppColors.btn_primery,
             width: double.infinity,
             height: 47,

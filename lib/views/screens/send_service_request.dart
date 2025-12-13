@@ -8,13 +8,9 @@ import 'package:mannai_user_app/widgets/inputs/app_text_field.dart';
 
 class SendServiceRequest extends StatefulWidget {
   final String title;
-  final String imagePath;
+  final String? imagePath;
 
-  const SendServiceRequest({
-    super.key,
-    required this.title,
-    required this.imagePath,
-  });
+  const SendServiceRequest({super.key, required this.title, this.imagePath});
 
   @override
   State<SendServiceRequest> createState() => _SendServiceRequestState();
@@ -44,9 +40,9 @@ class _SendServiceRequestState extends State<SendServiceRequest> {
                   children: [
                     AppCircleIconButton(
                       icon: Icons.arrow_back,
-                      onPressed: (){
-                          //  Navigator.push(context, MaterialPageRoute(builder: (context)=>))
-                          Navigator.pop(context);
+                      onPressed: () {
+                        //  Navigator.push(context, MaterialPageRoute(builder: (context)=>))
+                        Navigator.pop(context);
                       },
                     ),
                     Text(
@@ -73,30 +69,44 @@ class _SendServiceRequestState extends State<SendServiceRequest> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                      
                         // SERVICE IMAGE
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
-                          child: Image.asset(
-                            widget.imagePath,
-                            width: double.infinity,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          ),
+                          child: widget.imagePath != null
+                              ? Image.network(
+                                  widget.imagePath!,
+                                  width: double.infinity,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  width: double.infinity,
+                                  height: 200,
+                                  color: Colors.grey[300],
+                                  child: const Icon(
+                                    Icons.miscellaneous_services,
+                                    size: 50,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
 
                         const SizedBox(height: 25),
 
-                           const Text(
-            "Issue  Details",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 5),
-          AppTextField(
-            controller: TextEditingController(text: "Select an Issuse"),
-          ),
-            const SizedBox(height: 15),
-
+                        const Text(
+                          "Issue  Details",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        AppTextField(
+                          controller: TextEditingController(
+                            text: "Select an Issuse",
+                          ),
+                        ),
+                        const SizedBox(height: 15),
 
                         // DESCRIPTION FIELD
                         TextField(
@@ -140,7 +150,7 @@ class _SendServiceRequestState extends State<SendServiceRequest> {
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(
-                                color:Color.fromRGBO(135, 137, 147, 100),
+                                color: Color.fromRGBO(135, 137, 147, 100),
                                 width: 1.2,
                               ),
                               backgroundColor: Colors.white,
@@ -167,7 +177,7 @@ class _SendServiceRequestState extends State<SendServiceRequest> {
                                   height: 38,
                                   width: 38,
                                   decoration: const BoxDecoration(
-                                          color:Color.fromRGBO(135, 137, 147, 100),
+                                    color: Color.fromRGBO(135, 137, 147, 100),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Center(

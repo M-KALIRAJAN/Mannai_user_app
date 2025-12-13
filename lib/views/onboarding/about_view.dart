@@ -1,10 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/core/constants/app_consts.dart';
 import 'package:mannai_user_app/core/utils/logger.dart';
-import 'package:mannai_user_app/routing/app_router.dart';
 import 'package:mannai_user_app/services/onbording_service.dart';
 import 'package:mannai_user_app/views/auth/login_view.dart';
 import 'package:mannai_user_app/widgets/app_back.dart';
@@ -18,11 +15,10 @@ class AboutView extends StatefulWidget {
 
 class _AboutViewState extends State<AboutView> {
   final PageController _controller = PageController();
+
   int currentIndex = 0;
-  Map<String, dynamic>? aboutData;
   bool isLoading = true;
   final List<String> textPages = [];
-  // Only the text content changes
 
   @override
   void initState() {
@@ -30,15 +26,18 @@ class _AboutViewState extends State<AboutView> {
     loadAbout();
   }
 
-  void loadAbout() async {
-    aboutData = await OnbordingService().fetchAbout();
+  Future<void> loadAbout() async {
+    final aboutData = await OnbordingService().fetchAbout();
 
     AppLogger.warn(jsonEncode(aboutData));
 
     if (aboutData != null &&
-        aboutData!["data"] != null &&
-        aboutData!["data"]["content"] ) {
-      textPages.addAll(List<String>.from(aboutData!["data"]["content"]));
+        aboutData["data"] != null &&
+        aboutData["data"]["content"] is List) {
+      // textPages.clear();
+      textPages.addAll(
+        List<String>.from(aboutData["data"]["content"]),
+      );
     }
 
     setState(() {
@@ -53,10 +52,9 @@ class _AboutViewState extends State<AboutView> {
         curve: Curves.easeInOut,
       );
     } else {
-      // _controller.jumpToPage(0); // loop back to first
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginView()),
+        MaterialPageRoute(builder: (_) => LoginView()),
       );
     }
   }
@@ -67,6 +65,7 @@ class _AboutViewState extends State<AboutView> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
+          /// TOP IMAGE
           SizedBox(
             height: 350,
             width: double.infinity,
@@ -86,7 +85,7 @@ class _AboutViewState extends State<AboutView> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.white.withOpacity(0),
+                          const Color.fromARGB(0, 241, 238, 238),
                           Colors.white,
                         ],
                       ),
@@ -102,9 +101,7 @@ class _AboutViewState extends State<AboutView> {
                     children: [
                       AppCircleIconButton(
                         icon: Icons.arrow_back,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
+                        onPressed: () => Navigator.pop(context),
                       ),
                       Text(
                         "About",
@@ -117,11 +114,10 @@ class _AboutViewState extends State<AboutView> {
                       ),
                       InkWell(
                         onTap: () {
-                          //  context.push(RouteNames.login);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LoginView(),
+                              builder: (_) => LoginView(),
                             ),
                           );
                         },
@@ -134,15 +130,12 @@ class _AboutViewState extends State<AboutView> {
                           ),
                           child: Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text(
-                                  "Skip",
-                                  style: TextStyle(
-                                    color: AppColors.btn_primery,
-                                    fontSize: 12,
-                                    fontFamily: "Poppins",
-                                  ),
+                              const Text(
+                                "Skip",
+                                style: TextStyle(
+                                  color: AppColors.btn_primery,
+                                  fontSize: 12,
+                                  fontFamily: "Poppins",
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -163,6 +156,8 @@ class _AboutViewState extends State<AboutView> {
           ),
 
           const SizedBox(height: 10),
+
+          /// TITLE
           Text(
             "Nadi Bahrain Services",
             style: TextStyle(
@@ -174,58 +169,62 @@ class _AboutViewState extends State<AboutView> {
 
           const SizedBox(height: 10),
 
+          /// CONTENT
           SizedBox(
             height: 250,
-            child: PageView.builder(
-              controller: _controller,
-              itemCount: textPages.length,
-              onPageChanged: (index) {
-                setState(() {
-                  currentIndex = index;
-                });
-              },
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Text(
-                    textPages[index],
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(
-                      fontSize: AppFontSizes.small,
-                      height: 1.5,
-                      fontFamily: "Poppins",
-                      color: Colors.black87,
-                    ),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : PageView.builder(
+                    controller: _controller,
+                    itemCount: textPages.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        currentIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Text(
+                          textPages[index],
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                            fontSize: AppFontSizes.small,
+                            height: 1.5,
+                            fontFamily: "Poppins",
+                            color: Colors.black87,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
 
           const SizedBox(height: 20),
+
+       
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(""),
+                const SizedBox(width: 40),
                 Row(
                   children: List.generate(
                     textPages.length,
                     (index) => Container(
                       margin: const EdgeInsets.symmetric(horizontal: 4),
-                      height: 12,
-                      width: 12,
+                      height: 10,
+                      width: 10,
                       decoration: BoxDecoration(
                         color: index == currentIndex
                             ? AppColors.btn_primery
-                            : AppColors.btn_primery.withOpacity(0.4),
+                            : AppColors.btn_primery.withOpacity(0.3),
                         shape: BoxShape.circle,
                       ),
                     ),
                   ),
                 ),
-
                 GestureDetector(
                   onTap: nextPage,
                   child: Container(

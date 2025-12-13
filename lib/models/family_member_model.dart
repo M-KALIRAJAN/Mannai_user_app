@@ -1,4 +1,4 @@
-import 'package:mannai_user_app/models/address_model.dart';
+
 
 class FamilyMemberModel {
   final String fullName;
@@ -8,11 +8,11 @@ class FamilyMemberModel {
 
   final String relation;
   final String familyCount;
-  final AddressModel address;
+
 
   FamilyMemberModel({
     required this.relation,
-    required this.address,
+
     required this.fullName,
     required this.mobileNumber,
     required this.email,
@@ -26,9 +26,8 @@ class FamilyMemberModel {
     "mobileNumber": mobileNumber,
     "email": email,
     "gender": gender,
-  
     "relation": relation,
     "familyCount": familyCount,
-    "address": address.toJson(),
+   
   };
 }
