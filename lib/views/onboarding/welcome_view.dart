@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/core/constants/app_consts.dart';
@@ -22,7 +23,6 @@ class WelcomeView extends StatefulWidget {
 }
 
 class _WelcomeViewState extends State<WelcomeView> {
-
   String? welcomeUrl;
   @override
   void initState() {
@@ -34,13 +34,12 @@ class _WelcomeViewState extends State<WelcomeView> {
   void welocomelogo() async {
     final welcomeLogo = await OnbordingService().loading();
     AppLogger.warn(jsonEncode(welcomeLogo));
-        if(welcomeLogo != null && welcomeLogo["data"] != null){
-          setState(() {
-            String fileName = welcomeLogo["data"]["image"];
-              welcomeUrl = "${ImageBaseUrl.baseUrl}$fileName";
-          });
-        }
- 
+    if (welcomeLogo != null && welcomeLogo["data"] != null) {
+      setState(() {
+        String fileName = welcomeLogo["data"]["image"];
+        welcomeUrl = "${ImageBaseUrl.baseUrl}$fileName";
+      });
+    }
   }
 
   @override
@@ -80,23 +79,24 @@ class _WelcomeViewState extends State<WelcomeView> {
 
                 Positioned(top: 50, right: 20, child: LanguageView()),
 
-          Positioned(
-  bottom: -110,
-  child: SizedBox(
-    height: 270,
-    width: 480,
-    child: welcomeUrl == null
-      ? Image.asset(
-          "assets/images/logo.png",
-          fit: BoxFit.contain,
-        )
-      : Image.network(
-          welcomeUrl!,
-          fit: BoxFit.contain,
-        ),
-  ),
-),
+                Positioned(
+                  bottom: -110,
+                  child: SizedBox(
+                    height: 270,
+                    width: 480,
+                    child: welcomeUrl == null
+                        ? Image.asset(
+                            "assets/images/logo.png",
+                            fit: BoxFit.contain,
+                          )
+                        : CachedNetworkImage(
+                          imageUrl: welcomeUrl!,
+                          fit: BoxFit.contain,
+                            useOldImageOnUrlChange: true,
 
+                          ),
+                  ),
+                ),
               ],
             ),
 

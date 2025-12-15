@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/controllers/address_controller.dart';
 import 'package:mannai_user_app/core/utils/logger.dart';
 import 'package:mannai_user_app/core/constants/app_consts.dart';
+import 'package:mannai_user_app/providers/auth_Provider.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
 import 'package:mannai_user_app/widgets/buttons/primary_button.dart';
 import 'package:mannai_user_app/widgets/inputs/app_dropdown.dart';
@@ -69,6 +71,7 @@ class _AddressState extends State<Address> {
 
   @override
   Widget build(BuildContext context) {
+   
     return Form(
       key: widget.formKey,
       child: Column(
@@ -132,18 +135,64 @@ class _AddressState extends State<Address> {
           ),
           SizedBox(height: 17),
       
-          AppDropdown(
-            label: "Select Your Road*",
-            items: ["Male", "Female", "Oter"],
-            value: controller.rode,
-            onChanged: (val) {
-              setState(() {
-                controller.rode = val;
-              });
-            },
-            validator: (val) =>
-                val == null ? "Please select relationship" : null,
-          ),
+Consumer(
+  builder: (context, ref, child) {
+    final roadsAsync = ref.watch(getBlockProvider);
+
+    return roadsAsync.when(
+      data: (roads) {
+        final roadNames = roads.map((r) => r['name'] as String).toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Road Dropdown
+            AppDropdown(
+              label: "Select Your Road*",
+              items: roadNames,
+              value: controller.road,
+              onChanged: (val) {
+                setState(() {
+                  controller.road = val;
+                  controller.block = null;
+
+                  final selectedRoad =
+                      roads.firstWhere((r) => r['name'] == val);
+                  controller.blocksForSelectedRoad = List<Map<String, dynamic>>.from(
+                      (selectedRoad['blocks'] as List)
+                          .map((e) => Map<String, dynamic>.from(e)));
+                });
+              },
+              validator: (val) =>
+                  val == null ? "Please select a road" : null,
+            ),
+            SizedBox(height: 15),
+            // Block Dropdown
+            AppDropdown(
+              label: "Select Your Block*",
+              items: controller.blocksForSelectedRoad
+                  .map((b) => b['name'] as String)
+                  .toList(),
+              value: controller.block,
+              onChanged: (val) {
+                setState(() {
+                  controller.block = val;
+                });
+              },
+              validator: (val) =>
+                  val == null ? "Please select a block" : null,
+            ),
+          ],
+        );
+      },
+      loading: () => const CircularProgressIndicator(),
+      error: (e, _) => Text("Failed to load roads/blocks: $e"),
+    );
+  },
+),
+
+
+
           SizedBox(height: 20),
           if (!widget.family) // If NOT coming from add member
             AppButton(
@@ -160,7 +209,7 @@ class _AddressState extends State<Address> {
                 } else {
                   //  Final submit
                   final addressData = controller.getAddressData();
-                  AppLogger.debug(addressData.toJson().toString());
+                  // AppLogger.debug(addressData.toJson().toString());
                   context.push(RouteNames.accountverfy);
                 }
               },

@@ -1,52 +1,23 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mannai_user_app/core/constants/app_consts.dart';
-import 'package:mannai_user_app/core/utils/logger.dart';
-import 'package:mannai_user_app/services/onbording_service.dart';
 import 'package:mannai_user_app/views/auth/login_view.dart';
 import 'package:mannai_user_app/widgets/app_back.dart';
+import 'package:mannai_user_app/providers/onbording_provider.dart'; // <-- provider file
 
-class AboutView extends StatefulWidget {
+class AboutView extends ConsumerStatefulWidget {
   const AboutView({super.key});
 
   @override
-  State<AboutView> createState() => _AboutViewState();
+  ConsumerState<AboutView> createState() => _AboutViewState();
 }
 
-class _AboutViewState extends State<AboutView> {
+class _AboutViewState extends ConsumerState<AboutView> {
   final PageController _controller = PageController();
-
   int currentIndex = 0;
-  bool isLoading = true;
-  final List<String> textPages = [];
 
-  @override
-  void initState() {
-    super.initState();
-    loadAbout();
-  }
-
-  Future<void> loadAbout() async {
-    final aboutData = await OnbordingService().fetchAbout();
-
-    AppLogger.warn(jsonEncode(aboutData));
-
-    if (aboutData != null &&
-        aboutData["data"] != null &&
-        aboutData["data"]["content"] is List) {
-      // textPages.clear();
-      textPages.addAll(
-        List<String>.from(aboutData["data"]["content"]),
-      );
-    }
-
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  void nextPage() {
-    if (currentIndex < textPages.length - 1) {
+  void nextPage(int total) {
+    if (currentIndex < total - 1) {
       _controller.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -54,18 +25,20 @@ class _AboutViewState extends State<AboutView> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => LoginView()),
+        MaterialPageRoute(builder: (_) => const LoginView()),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final aboutAsync = ref.watch(aboutContentProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          /// TOP IMAGE
+          /// ---------------- TOP IMAGE ----------------
           SizedBox(
             height: 350,
             width: double.infinity,
@@ -117,7 +90,7 @@ class _AboutViewState extends State<AboutView> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => LoginView(),
+                              builder: (_) => const LoginView(),
                             ),
                           );
                         },
@@ -157,7 +130,7 @@ class _AboutViewState extends State<AboutView> {
 
           const SizedBox(height: 10),
 
-          /// TITLE
+          /// ---------------- TITLE ----------------
           Text(
             "Nadi Bahrain Services",
             style: TextStyle(
@@ -169,64 +142,91 @@ class _AboutViewState extends State<AboutView> {
 
           const SizedBox(height: 10),
 
-          /// CONTENT
+          /// ---------------- CONTENT ----------------
           SizedBox(
             height: 250,
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : PageView.builder(
-                    controller: _controller,
-                    itemCount: textPages.length,
-                    onPageChanged: (index) {
-                      setState(() {
-                        currentIndex = index;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Text(
-                          textPages[index],
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(
-                            fontSize: AppFontSizes.small,
-                            height: 1.5,
-                            fontFamily: "Poppins",
-                            color: Colors.black87,
-                          ),
+            child: aboutAsync.when(
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              error: (err, _) => const Center(
+                child: Text("Failed to load content"),
+              ),
+              data: (textPages) {
+                if (textPages.isEmpty) {
+                  return const Center(
+                    child: Text("No content available"),
+                  );
+                }
+
+                return PageView.builder(
+                  controller: _controller,
+                  itemCount: textPages.length,
+                  onPageChanged: (index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Text(
+                        textPages[index],
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          fontSize: AppFontSizes.small,
+                          height: 1.5,
+                          fontFamily: "Poppins",
+                          color: Colors.black87,
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
 
           const SizedBox(height: 20),
 
-       
+          /// ---------------- BOTTOM CONTROLS ----------------
           Padding(
             padding: const EdgeInsets.all(10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const SizedBox(width: 40),
-                Row(
-                  children: List.generate(
-                    textPages.length,
-                    (index) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      height: 10,
-                      width: 10,
-                      decoration: BoxDecoration(
-                        color: index == currentIndex
-                            ? AppColors.btn_primery
-                            : AppColors.btn_primery.withOpacity(0.3),
-                        shape: BoxShape.circle,
+
+                /// Indicators
+                aboutAsync.maybeWhen(
+                  data: (textPages) => Row(
+                    children: List.generate(
+                      textPages.length,
+                      (index) => Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        height: 10,
+                        width: 10,
+                        decoration: BoxDecoration(
+                          color: index == currentIndex
+                              ? AppColors.btn_primery
+                              : AppColors.btn_primery.withOpacity(0.3),
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ),
                   ),
+                  orElse: () => const SizedBox(),
                 ),
+
+                /// Next Button
                 GestureDetector(
-                  onTap: nextPage,
+                  onTap: () {
+                    final total = aboutAsync.maybeWhen(
+                      data: (list) => list.length,
+                      orElse: () => 0,
+                    );
+                    nextPage(total);
+                  },
                   child: Container(
                     height: 38,
                     width: 38,

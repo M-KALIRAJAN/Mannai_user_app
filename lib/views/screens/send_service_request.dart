@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/core/constants/app_consts.dart';
@@ -73,12 +74,13 @@ class _SendServiceRequestState extends State<SendServiceRequest> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: widget.imagePath != null
-                              ? Image.network(
-                                  widget.imagePath!,
-                                  width: double.infinity,
+                              ?CachedNetworkImage(
+                                imageUrl:widget.imagePath!,
+                                       width: double.infinity,
                                   height: 200,
                                   fit: BoxFit.cover,
                                 )
+                          
                               : Container(
                                   width: double.infinity,
                                   height: 200,

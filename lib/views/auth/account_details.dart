@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mannai_user_app/core/constants/app_consts.dart';
+import 'package:mannai_user_app/core/utils/logger.dart';
 import 'package:mannai_user_app/routing/app_router.dart';
+import 'package:mannai_user_app/services/auth_service.dart';
 import 'package:mannai_user_app/widgets/app_back.dart';
 import 'package:mannai_user_app/widgets/buttons/primary_button.dart';
 
@@ -13,6 +15,17 @@ class AccountDetails extends StatefulWidget {
 }
 
 class _AccountDetailsState extends State<AccountDetails> {
+  final AuthService _authService = AuthService();
+  @override
+  void initState() {
+    super.initState();
+    _loadAccoundtype();
+  }
+
+  Future<void> _loadAccoundtype() async {
+    await _authService.acountype();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +56,7 @@ class _AccountDetailsState extends State<AccountDetails> {
               height: MediaQuery.of(context).size.height * 0.50,
               width: double.infinity,
               padding: const EdgeInsets.all(30),
-            
+
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -51,20 +64,17 @@ class _AccountDetailsState extends State<AccountDetails> {
                   topRight: Radius.circular(50),
                 ),
               ),
-            
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "Account Type",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                   ),
-            
+
                   const SizedBox(height: 25),
-            
+                  // In your AccountDetails widget
                   AppButton(
                     text: "Individual Account",
                     icon: Image.asset(
@@ -74,13 +84,27 @@ class _AccountDetailsState extends State<AccountDetails> {
                     ),
                     color: AppColors.btn_primery,
                     width: double.infinity,
-                    onPressed: () {
-                        context.pushNamed(RouteNames.stepper, extra: "Individual");
+                    onPressed: () async {
+                      final res = await _authService.selectIndividualAccount();
+                      if (res) {
+                        // userId is stored, navigate to next screen
+                        context.pushNamed(
+                          RouteNames.stepper,
+                          extra: "Individual",
+                        );
+                      } else {
+                        // API failed or userId not found
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Failed to select account"),
+                          ),
+                        );
+                      }
                     },
                   ),
-            
+
                   const SizedBox(height: 8),
-            
+
                   Text(
                     "Manage your services and profile independently.",
                     style: TextStyle(
@@ -88,22 +112,30 @@ class _AccountDetailsState extends State<AccountDetails> {
                       color: AppColors.borderGrey,
                     ),
                   ),
-            
+
                   const SizedBox(height: 27),
-            
+
                   AppButton(
                     text: "Family Account",
                     icon: Image.asset("assets/icons/persons.png", height: 40),
                     color: AppColors.btn_primery,
                     width: double.infinity,
-                    onPressed: () {
+                    onPressed: () async{
                       // context.push(RouteNames.bottomnav);
-                       context.pushNamed(RouteNames.stepper, extra: "Family"); 
+                      // context.pushNamed(RouteNames.stepper, extra: "Family");
+                       final res = await _authService.selectIndividualAccount();
+                      if (res) {
+                        // userId is stored, navigate to next screen
+                        context.pushNamed(
+                          RouteNames.stepper,
+                          extra: "Family",
+                        );
+                      }
                     },
                   ),
-            
+
                   const SizedBox(height: 8),
-            
+
                   Text(
                     "Register and manage services for multiple family members.",
                     style: TextStyle(

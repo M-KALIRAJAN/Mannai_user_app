@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:mannai_user_app/controllers/signup_controller.dart';
 import 'package:mannai_user_app/core/utils/logger.dart';
 import 'package:mannai_user_app/core/constants/app_consts.dart';
+import 'package:mannai_user_app/services/auth_service.dart';
 import 'package:mannai_user_app/widgets/buttons/primary_button.dart';
 import 'package:mannai_user_app/widgets/inputs/app_dropdown.dart';
 import 'package:mannai_user_app/widgets/inputs/app_text_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountFormView extends StatefulWidget {
   final String accountType;
   final VoidCallback onNext;
   final GlobalKey<FormState> formKey;
-
 
   const AccountFormView({
     super.key,
@@ -25,12 +26,28 @@ class AccountFormView extends StatefulWidget {
 
 class _AccountFormViewState extends State<AccountFormView> {
   final controller = SignupController();
+  final AuthService _basicInfo = AuthService();
 
-  Future<void> submitBasicInfo(BuildContext context) async{
-      if(!widget.formKey.currentState!.validate()) return ;
-       controller.saveToModel();
-         AppLogger.debug(controller.signupData!.toJson().toString());
-           widget.onNext();
+  Future<void> submitBasicInfo(BuildContext context) async {
+    if (!widget.formKey.currentState!.validate()) return;
+    controller.saveToModel();
+    final data = controller.signupData!;
+    AppLogger.debug("User Basic Info : ${data.toJson().toString()}");
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString("userId");
+    try {
+      final response = await _basicInfo.basicInfo(
+        userId: userId!,
+        fullName: data.fullName,
+        mobileNumber: data.mobileNumber,
+        email: data.email,
+        password: data.password,
+        gender: data.gender,
+      );
+      if (response["message"] == "Basic info saved") {
+        widget.onNext();
+      }
+    } catch (e) {}
   }
 
   @override
@@ -43,10 +60,7 @@ class _AccountFormViewState extends State<AccountFormView> {
         children: [
           Text(
             "${widget.accountType} ",
-            style: const TextStyle(
-                  fontSize: 22,
-                    fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 20),
 
@@ -111,7 +125,7 @@ class _AccountFormViewState extends State<AccountFormView> {
             width: double.infinity,
 
             onPressed: () {
-                   submitBasicInfo(context);
+              submitBasicInfo(context);
             },
           ),
         ],

@@ -1,47 +1,28 @@
 import 'package:flutter/material.dart';
 
-import 'package:mannai_user_app/models/address_model.dart';
-
 class AddressController {
-  // Text controllers for each field
-  final street = TextEditingController();
-  final city = TextEditingController();
-  final aptNo = TextEditingController();
-  final building = TextEditingController();
-final floor = TextEditingController();
-  //Rode
-    String?rode ;
+  TextEditingController building = TextEditingController();
+  TextEditingController city = TextEditingController();
+  TextEditingController aptNo = TextEditingController();
+  TextEditingController floor = TextEditingController();
 
-   
-  // Validators
-  String? validateDoorNo(String? value) =>
-      value == null || value.isEmpty ? "Enter door number" : null;
+  // NEW fields
+  String? road; // selected road
+  String? block; // selected block
+  List<Map<String, dynamic>> blocksForSelectedRoad = []; // blocks for selected road
 
-  String? validateStreet(String? value) =>
-      value == null || value.isEmpty ? "Enter street" : null;
-
-       String? validateFloor(String? value) =>
-      value == null || value.isEmpty ? "Enter Floor" : null;
-
-  String? validateAptNo(String? value) =>
-      value == null || value.isEmpty ? "Enter apartment number" : null;
-
-  String? validateBuilding(String? value) =>
-      value == null || value.isEmpty ? "Enter building name" : null;
-
-    String? validateRode(String? value) =>
-       value == null || value.isEmpty ?  "Select Your Road": null
-;
-  // Save data to model
-  AddressModel getAddressData() {
-    return AddressModel(
-      aptNo: aptNo.text, 
-      street: street.text, 
-      city: city.text,
-        floor: floor.text, 
-        rode:rode! ,  
-       building: building.text);
+  Map<String, dynamic> getAddressData() {
+    return {
+      "building": building.text,
+      "city": city.text,
+      "aptNo": aptNo.text,
+      "floor": floor.text,
+      "road": road,
+      "block": block,
+    };
   }
 
- 
+  String? validateBuilding(String? val) => val?.isEmpty ?? true ? "Required" : null;
+  String? validateAptNo(String? val) => val?.isEmpty ?? true ? "Required" : null;
+  String? validateFloor(String? val) => val?.isEmpty ?? true ? "Required" : null;
 }
